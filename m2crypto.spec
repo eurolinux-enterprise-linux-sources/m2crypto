@@ -6,7 +6,7 @@
 Summary: Support for using OpenSSL in python scripts
 Name: m2crypto
 Version: 0.20.2
-Release: 7%{?dist}
+Release: 9%{?dist}
 Source0: http://pypi.python.org/packages/source/M/M2Crypto/M2Crypto-%{version}.tar.gz
 # https://bugzilla.osafoundation.org/show_bug.cgi?id=2341
 Patch0: m2crypto-0.18-timeouts.patch
@@ -22,6 +22,12 @@ Patch4: m2crypto-0.20.2-testsuite.patch
 Patch5: m2crypto-0.20.2-fips.patch
 # https://bugzilla.osafoundation.org/show_bug.cgi?id=12973
 Patch6: m2crypto-0.20.2-check.patch
+# https://bugzilla.osafoundation.org/show_bug.cgi?id=13044
+Patch7: m2crypto-0.20.2-IPv6.patch
+# https://bugzilla.osafoundation.org/show_bug.cgi?id=13049
+Patch8: m2crypto-0.20.2-https-proxy.patch
+# https://bugzilla.osafoundation.org/show_bug.cgi?id=12999
+Patch9: m2crypto-0.20.2-AES_crypt.patch
 License: MIT
 Group: System Environment/Libraries
 URL: http://wiki.osafoundation.org/bin/view/Projects/MeTooCrypto
@@ -41,6 +47,9 @@ This package allows you to call OpenSSL functions from python scripts.
 %patch4 -p0 -b .testsuite
 %patch5 -p1 -b .fips
 %patch6 -p1 -b .check
+%patch7 -p1 -b .IPv6
+%patch8 -p1 -b .https-proxy
+%patch9 -p1 -b .AES_crypt
 
 # Red Hat opensslconf.h #includes an architecture-specific file, but SWIG
 # doesn't follow the #include.
@@ -107,6 +116,16 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitearch}/M2Crypto-*.egg-info
 
 %changelog
+* Thu Mar 15 2012 Miloslav Trmač <mitr@redhat.com> - 0.20.2-9
+- Fix HTTPS proxy support
+  Resolves: #803554
+- Fix a memory leak in AES_crypt
+  Resolves: #803520
+
+* Tue Mar 13 2012 Miloslav Trmač <mitr@redhat.com> - 0.20.2-8
+- Support IPv6 in M2Crypto.httpslib
+  Resolves: #742914
+
 * Fri Jul  9 2010 Miloslav Trmač <mitr@redhat.com> - 0.20.2-7
 - Allow overriding SSL.Connection.postConnectionCheck from m2urllib2
   Resolves: #610906
