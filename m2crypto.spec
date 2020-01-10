@@ -1,12 +1,12 @@
 %{!?python_sitearch: %global python_sitearch %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib(1)")}
 
 # Keep this value in sync with the definition in openssl.spec.
-%global multilib_arches %{ix86} ia64 ppc ppc64 s390 s390x x86_64 sparc sparcv9 sparc64
+%global multilib_arches %{ix86} ia64 ppc %{power64} s390 s390x sparcv9 sparc64 x86_64
 
 Summary: Support for using OpenSSL in python scripts
 Name: m2crypto
 Version: 0.21.1
-Release: 15%{?dist}
+Release: 17%{?dist}
 Source0: http://pypi.python.org/packages/source/M/M2Crypto/M2Crypto-%{version}.tar.gz
 # https://bugzilla.osafoundation.org/show_bug.cgi?id=2341
 Patch0: m2crypto-0.21.1-timeouts.patch
@@ -42,6 +42,10 @@ Patch14: m2crypto-0.21.1-tests-no-SIGHUP.patch
 Patch15: m2crypto-0.21.1-tests-no-export-ciphers.patch
 # https://bugzilla.osafoundation.org/show_bug.cgi?id=13104
 Patch16: m2crypto-0.21.1-tests-random-ports.patch
+# https://github.com/martinpaljak/M2Crypto/issues/70
+Patch17: m2crypto-0.21.1-test_cookie_str_changed.patch
+# https://github.com/martinpaljak/M2Crypto/issues/19
+Patch18: m2crypto-0.21.1-SAN-ip.patch
 License: MIT
 Group: System Environment/Libraries
 URL: http://wiki.osafoundation.org/bin/view/Projects/MeTooCrypto
@@ -74,6 +78,8 @@ openssl x509 -in tests/x509.pem -out tests/x509.der -outform DER
 %patch14 -p1 -b .tests-no-SIGHUP
 %patch15 -p1 -b .tests-no-export-ciphers
 %patch16 -p1 -b .tests-random-ports
+%patch17 -p1 -b .test_cookie_str_changed
+%patch18 -p1 -b .SAN-ip
 
 # Red Hat opensslconf.h #includes an architecture-specific file, but SWIG
 # doesn't follow the #include.
@@ -138,6 +144,16 @@ rm tests/*.{pem,py}.* # Patch backup files
 %{python_sitearch}/M2Crypto-*.egg-info
 
 %changelog
+* Tue Jul 7 2015 Miloslav Trmač <mitr@redhat.com> - 0.21.1-17
+- Fix spurious failures of test_cookie_str_changed_mac
+  Resolves: #1073950
+- Add support for IP addresses in subjectAltName
+  Resolves: #1080142
+
+* Wed Aug 20 2014 Miloslav Trmač <mitr@redhat.com> - 0.21.1-16
+- Sync %%multilib_arches with openssl.
+  Resolves: #1125603
+
 * Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 0.21.1-15
 - Mass rebuild 2014-01-24
 
