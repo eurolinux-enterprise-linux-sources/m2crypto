@@ -6,7 +6,7 @@
 Summary: Support for using OpenSSL in python scripts
 Name: m2crypto
 Version: 0.21.1
-Release: 11%{?dist}
+Release: 15%{?dist}
 Source0: http://pypi.python.org/packages/source/M/M2Crypto/M2Crypto-%{version}.tar.gz
 # https://bugzilla.osafoundation.org/show_bug.cgi?id=2341
 Patch0: m2crypto-0.21.1-timeouts.patch
@@ -30,10 +30,22 @@ Patch8: m2crypto-0.21.1-https-proxy.patch
 Patch9: m2crypto-0.21.1-certs.patch
 # https://bugzilla.osafoundation.org/show_bug.cgi?id=13072
 Patch10: m2crypto-0.21.1-ssl23.patch
+# https://bugzilla.osafoundation.org/show_bug.cgi?id=13098
+Patch11: m2crypto-0.21.1-SSL_CTX_new.patch
+# https://bugzilla.osafoundation.org/show_bug.cgi?id=13073
+Patch12: m2crypto-0.21.1-sni.patch
+# https://bugzilla.osafoundation.org/show_bug.cgi?id=13100
+Patch13: m2crypto-0.21.1-supported-ec.patch
+# https://bugzilla.osafoundation.org/show_bug.cgi?id=13101
+Patch14: m2crypto-0.21.1-tests-no-SIGHUP.patch
+# https://bugzilla.osafoundation.org/show_bug.cgi?id=13103
+Patch15: m2crypto-0.21.1-tests-no-export-ciphers.patch
+# https://bugzilla.osafoundation.org/show_bug.cgi?id=13104
+Patch16: m2crypto-0.21.1-tests-random-ports.patch
 License: MIT
 Group: System Environment/Libraries
 URL: http://wiki.osafoundation.org/bin/view/Projects/MeTooCrypto
-BuildRequires: openssl, openssl-devel, python2-devel
+BuildRequires: openssl, openssl-devel, python2-devel, python-setuptools
 BuildRequires: perl, pkgconfig, swig, which
 
 %filter_provides_in %{python_sitearch}/M2Crypto/__m2crypto.so
@@ -56,6 +68,12 @@ This package allows you to call OpenSSL functions from python scripts.
 %patch9 -p0 -b .certs
 openssl x509 -in tests/x509.pem -out tests/x509.der -outform DER
 %patch10 -p0 -b .ssl23
+%patch11 -p1 -b .SSL_CTX_new
+%patch12 -p1 -b .sni
+%patch13 -p1 -b .supported-ec
+%patch14 -p1 -b .tests-no-SIGHUP
+%patch15 -p1 -b .tests-no-export-ciphers
+%patch16 -p1 -b .tests-random-ports
 
 # Red Hat opensslconf.h #includes an architecture-specific file, but SWIG
 # doesn't follow the #include.
@@ -111,12 +129,43 @@ grep -rl '/usr/bin/env python' demo tests \
 
 rm tests/*.{pem,py}.* # Patch backup files
 
+%check
+%{__python} setup.py test
+
 %files
-%doc CHANGES LICENCE README demo tests
+%doc CHANGES LICENCE README demo
 %{python_sitearch}/M2Crypto
 %{python_sitearch}/M2Crypto-*.egg-info
 
 %changelog
+* Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 0.21.1-15
+- Mass rebuild 2014-01-24
+
+* Mon Jan 6 2014 Miloslav Trmač <mitr@redhat.com> - 0.21.1-14
+- Don't assume that export ciphers are enabled in the test suite
+  Resolves: #1048887
+- Let the kernel allocate free ports for use by the test suite
+  Resolves: #1048887
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 0.21.1-13
+- Mass rebuild 2013-12-27
+
+* Thu Dec 19 2013 Miloslav Trmač <mitr@redhat.com> - 0.21.1-12
+- Fix occasional spurious failures in test_makefile_timeout_fires
+  Resolves: #969077
+- Fix incorrect exception handling of SSL_CTX_new (manifesting in FIPS mode)
+  Resolves: #879043
+- Add minimal SNI support, based on a patch by Sander Steffann
+  <sander@steffann.nl>
+  Resolves: #1038795
+- Use only ECC curves available in Fedora in the test suite
+  Related: #1038813
+- Fix terminating test suite helper processes when running in Koji
+  Related: #1038813
+- Run test suite in %%check, don't ship it in the package.  Based on a patch by
+  Matěj Cepl <mcepl@redhat.com>.
+  Resolves: #1038813
+
 * Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.21.1-11
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 

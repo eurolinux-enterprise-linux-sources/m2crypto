@@ -1,7 +1,7 @@
-diff -ur m2crypto-0.18/M2Crypto/SSL/Connection.py m2crypto/M2Crypto/SSL/Connection.py
---- m2crypto-0.18/M2Crypto/SSL/Connection.py	2007-06-15 23:34:05.000000000 +0200
-+++ m2crypto/M2Crypto/SSL/Connection.py	2007-07-31 23:30:51.000000000 +0200
-@@ -37,9 +37,11 @@
+diff -urN M2Crypto/M2Crypto/SSL/Connection.py M2Crypto-0.21.1/M2Crypto/SSL/Connection.py
+--- M2Crypto/M2Crypto/SSL/Connection.py	2013-11-26 20:01:02.591964970 +0100
++++ M2Crypto-0.21.1/M2Crypto/SSL/Connection.py	2013-11-26 20:01:19.204950349 +0100
+@@ -47,9 +47,11 @@
              self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
              self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
          self._fileno = self.socket.fileno()
@@ -16,7 +16,7 @@ diff -ur m2crypto-0.18/M2Crypto/SSL/Connection.py m2crypto/M2Crypto/SSL/Connecti
          self.ssl_close_flag = m2.bio_noclose
  
          
-@@ -137,7 +139,7 @@
+@@ -147,7 +149,7 @@
          m2.ssl_set_accept_state(self.ssl)
  
      def accept_ssl(self):
@@ -25,7 +25,7 @@ diff -ur m2crypto-0.18/M2Crypto/SSL/Connection.py m2crypto/M2Crypto/SSL/Connecti
  
      def accept(self):
          """Accept an SSL connection. The return value is a pair (ssl, addr) where
-@@ -159,7 +161,7 @@
+@@ -169,7 +171,7 @@
          m2.ssl_set_connect_state(self.ssl)
  
      def connect_ssl(self):
@@ -34,7 +34,7 @@ diff -ur m2crypto-0.18/M2Crypto/SSL/Connection.py m2crypto/M2Crypto/SSL/Connecti
  
      def connect(self, addr):
          self.socket.connect(addr)
-@@ -186,7 +188,7 @@
+@@ -196,7 +198,7 @@
          return m2.ssl_pending(self.ssl)
  
      def _write_bio(self, data):
@@ -43,7 +43,7 @@ diff -ur m2crypto-0.18/M2Crypto/SSL/Connection.py m2crypto/M2Crypto/SSL/Connecti
  
      def _write_nbio(self, data):
          return m2.ssl_write_nbio(self.ssl, data)
-@@ -194,7 +196,7 @@
+@@ -204,7 +206,7 @@
      def _read_bio(self, size=1024):
          if size <= 0:
              raise ValueError, 'size <= 0'
@@ -52,7 +52,7 @@ diff -ur m2crypto-0.18/M2Crypto/SSL/Connection.py m2crypto/M2Crypto/SSL/Connecti
  
      def _read_nbio(self, size=1024):
          if size <= 0:
-@@ -202,13 +204,13 @@
+@@ -212,13 +214,13 @@
          return m2.ssl_read_nbio(self.ssl, size)
  
      def write(self, data):
@@ -68,7 +68,7 @@ diff -ur m2crypto-0.18/M2Crypto/SSL/Connection.py m2crypto/M2Crypto/SSL/Connecti
              return self._read_bio(size)
          return self._read_nbio(size)
      recv = read
-@@ -216,7 +218,17 @@
+@@ -226,7 +228,17 @@
      def setblocking(self, mode):
          """Set this connection's underlying socket to _mode_."""
          self.socket.setblocking(mode)
@@ -87,7 +87,7 @@ diff -ur m2crypto-0.18/M2Crypto/SSL/Connection.py m2crypto/M2Crypto/SSL/Connecti
  
      def fileno(self):
          return self.socket.fileno()
-@@ -293,15 +305,8 @@
+@@ -308,15 +320,8 @@
          """Set the cipher suites for this connection."""
          return m2.ssl_set_cipher_list(self.ssl, cipher_list)
  
@@ -105,9 +105,9 @@ diff -ur m2crypto-0.18/M2Crypto/SSL/Connection.py m2crypto/M2Crypto/SSL/Connecti
  
      def getsockname(self):
          return self.socket.getsockname()
-diff -ur m2crypto-0.18/M2Crypto/SSL/__init__.py m2crypto/M2Crypto/SSL/__init__.py
---- m2crypto-0.18/M2Crypto/SSL/__init__.py	2006-03-20 20:26:28.000000000 +0100
-+++ m2crypto/M2Crypto/SSL/__init__.py	2007-07-31 23:29:21.000000000 +0200
+diff -urN M2Crypto/M2Crypto/SSL/__init__.py M2Crypto-0.21.1/M2Crypto/SSL/__init__.py
+--- M2Crypto/M2Crypto/SSL/__init__.py	2013-11-26 20:01:02.590964971 +0100
++++ M2Crypto-0.21.1/M2Crypto/SSL/__init__.py	2013-11-26 20:01:19.204950349 +0100
 @@ -2,11 +2,14 @@
  
  Copyright (c) 1999-2004 Ng Pheng Siong. All rights reserved."""
@@ -124,10 +124,10 @@ diff -ur m2crypto-0.18/M2Crypto/SSL/__init__.py m2crypto/M2Crypto/SSL/__init__.p
  
  # M2Crypto.SSL
  from Cipher import Cipher, Cipher_Stack
-diff -ur m2crypto-0.18/SWIG/_ssl.i m2crypto/SWIG/_ssl.i
---- m2crypto-0.18/SWIG/_ssl.i	2007-06-05 02:30:11.000000000 +0200
-+++ m2crypto/SWIG/_ssl.i	2007-08-01 00:06:34.000000000 +0200
-@@ -8,10 +8,13 @@
+diff -urN M2Crypto/SWIG/_ssl.i M2Crypto-0.21.1/SWIG/_ssl.i
+--- M2Crypto/SWIG/_ssl.i	2013-11-26 20:01:02.612964952 +0100
++++ M2Crypto-0.21.1/SWIG/_ssl.i	2013-11-26 20:01:19.205950348 +0100
+@@ -11,10 +11,13 @@
  
  %{
  #include <pythread.h>
@@ -141,7 +141,7 @@ diff -ur m2crypto-0.18/SWIG/_ssl.i m2crypto/SWIG/_ssl.i
  %}
  
  %apply Pointer NONNULL { SSL_CTX * };
-@@ -142,6 +145,11 @@
+@@ -155,6 +158,11 @@
  %rename(ssl_session_get_timeout) SSL_SESSION_get_timeout;
  extern long SSL_SESSION_get_timeout(CONST SSL_SESSION *);
  
@@ -153,7 +153,7 @@ diff -ur m2crypto-0.18/SWIG/_ssl.i m2crypto/SWIG/_ssl.i
  %constant int ssl_error_none              = SSL_ERROR_NONE;
  %constant int ssl_error_ssl               = SSL_ERROR_SSL;
  %constant int ssl_error_want_read         = SSL_ERROR_WANT_READ;
-@@ -197,14 +205,19 @@
+@@ -210,14 +218,19 @@
  %constant int SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER = SSL_MODE_ENABLE_PARTIAL_WRITE;
  %constant int SSL_MODE_AUTO_RETRY           = SSL_MODE_AUTO_RETRY;
  
@@ -174,7 +174,7 @@ diff -ur m2crypto-0.18/SWIG/_ssl.i m2crypto/SWIG/_ssl.i
  }
  
  void ssl_ctx_passphrase_callback(SSL_CTX *ctx, PyObject *pyfunc) {
-@@ -358,36 +371,130 @@
+@@ -403,36 +416,130 @@
      return ret;
  }
  
@@ -319,7 +319,7 @@ diff -ur m2crypto-0.18/SWIG/_ssl.i m2crypto/SWIG/_ssl.i
              obj = NULL;
              break;
      }
-@@ -396,36 +503,38 @@
+@@ -441,36 +548,38 @@
      return obj;
  }
  
@@ -372,7 +372,7 @@ diff -ur m2crypto-0.18/SWIG/_ssl.i m2crypto/SWIG/_ssl.i
              obj = NULL;
              break;
      }
-@@ -438,10 +547,11 @@
+@@ -483,10 +592,11 @@
      SSL_set_shutdown(ssl, mode);
  }
  
@@ -386,7 +386,7 @@ diff -ur m2crypto-0.18/SWIG/_ssl.i m2crypto/SWIG/_ssl.i
  
      if (!(buf = PyMem_Malloc(num))) {
          PyErr_SetString(PyExc_MemoryError, "ssl_read");
-@@ -449,37 +559,44 @@
+@@ -494,37 +604,44 @@
      }
  
  
@@ -457,7 +457,7 @@ diff -ur m2crypto-0.18/SWIG/_ssl.i m2crypto/SWIG/_ssl.i
      }
      PyMem_Free(buf);
  
-@@ -537,22 +654,26 @@
+@@ -582,22 +699,26 @@
      return obj;
  }
  
@@ -488,7 +488,7 @@ diff -ur m2crypto-0.18/SWIG/_ssl.i m2crypto/SWIG/_ssl.i
          case SSL_ERROR_NONE:
          case SSL_ERROR_ZERO_RETURN:
              ret = r;
-@@ -560,20 +681,17 @@
+@@ -605,20 +726,17 @@
          case SSL_ERROR_WANT_WRITE:
          case SSL_ERROR_WANT_READ:
          case SSL_ERROR_WANT_X509_LOOKUP:
@@ -516,10 +516,10 @@ diff -ur m2crypto-0.18/SWIG/_ssl.i m2crypto/SWIG/_ssl.i
          default:
              ret = -1;
      }
-diff -ur m2crypto-0.18/tests/test_ssl.py m2crypto/tests/test_ssl.py
---- m2crypto-0.18/tests/test_ssl.py	2007-07-02 22:25:45.000000000 +0200
-+++ m2crypto/tests/test_ssl.py	2007-07-31 23:29:21.000000000 +0200
-@@ -887,6 +887,53 @@
+diff -urN M2Crypto/tests/test_ssl.py M2Crypto-0.21.1/tests/test_ssl.py
+--- M2Crypto/tests/test_ssl.py	2013-11-26 20:01:02.582964980 +0100
++++ M2Crypto-0.21.1/tests/test_ssl.py	2013-11-26 20:01:33.268937969 +0100
+@@ -972,6 +972,77 @@
  
  class TwistedSSLClientTestCase(BaseSSLClientTestCase):
  
@@ -556,19 +556,43 @@ diff -ur m2crypto-0.18/tests/test_ssl.py m2crypto/tests/test_ssl.py
 +        self.failIf(string.find(data, 's_server -quiet -www') == -1)
 +
 +    def test_makefile_timeout_fires(self):
-+        pid = self.start_server(self.args)
++        # This is convoluted because (openssl s_server -www) starts writing the
++        # response as soon as it receives the first line of the request, so it's
++        # possible for it to send the response before the request is sent and
++        # there would be no timeout.  So, let the server spend time reading from
++        # an empty pipe
++        FIFO_NAME = 'test_makefile_timeout_fires_fifo'
++        os.mkfifo('tests/' + FIFO_NAME)
++        pipe_pid = os.fork()
 +        try:
-+            from M2Crypto import httpslib
-+            c = httpslib.HTTPS(srv_host, srv_port)
-+            c.putrequest('GET', '/')
-+            c.putheader('Accept', 'text/html')
-+            c.putheader('Accept', 'text/plain')
-+            c.endheaders()
-+            c._conn.sock.settimeout(0.0000000001)
-+            self.assertRaises(socket.timeout, c.getreply)
-+            c.close()
++            if pipe_pid == 0:
++                try:
++                    f = open('tests/' + FIFO_NAME, 'w')
++                    try:
++                        time.sleep(sleepTime + 1)
++                        f.write('Content\n')
++                    finally:
++                        f.close()
++                finally:
++                    os._exit(0)
++            self.args[self.args.index('-www')] = '-WWW'
++            pid = self.start_server(self.args)
++            try:
++                from M2Crypto import httpslib
++                c = httpslib.HTTPS(srv_host, srv_port)
++                c.putrequest('GET', '/' + FIFO_NAME)
++                c.putheader('Accept', 'text/html')
++                c.putheader('Accept', 'text/plain')
++                c.endheaders()
++                c._conn.sock.settimeout(0.0000000001)
++                self.assertRaises(socket.timeout, c.getreply)
++                c.close()
++            finally:
++                self.stop_server(pid)
 +        finally:
-+            self.stop_server(pid)
++            os.kill(pipe_pid, 1)
++            os.waitpid(pipe_pid, 0)
++            os.unlink('tests/' + FIFO_NAME)
 +
      def test_twisted_wrapper(self):
          # Test only when twisted and ZopeInterfaces are present
